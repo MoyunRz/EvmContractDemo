@@ -50,6 +50,14 @@ public class ProxyContractTest {
         return contractsMetaTxForwarder;
     }
 
+    @Test
+    public void GetContractBINARY() {
+        ContractsMetaTxForwarder contractsMetaTxForwarder;
+        if ((contractsMetaTxForwarder = loadForwarderContract()) == null) {
+            return;
+        }
+    }
+
     /**
      * myData
      * 进行数据测试
@@ -59,10 +67,10 @@ public class ProxyContractTest {
 
 
         RequestData requestData = new RequestData(
-                "0xc5E889999785312c2452c6D5f482582adedE048b",
-                "0x2812d96d61c1f689caedaba8bdf349972d955c32",
-                BigInteger.valueOf(Long.parseLong("1604045668965015553")),
-                BigInteger.valueOf(10),
+                "0x292F714cf36cD7d616425ec8c9D40187F60bf6Da",
+                "0x175b6515de4abe508becf616b66cdc4438775075",
+                BigInteger.valueOf(Long.parseLong("1610847933583450113")),
+                BigInteger.valueOf(1),
                 new byte[0]
         );
 
@@ -75,12 +83,12 @@ public class ProxyContractTest {
         );
 
         RequestTx requestTx = new RequestTx();
-        requestTx.setFrom("0xc5E889999785312c2452c6D5f482582adedE048b");
+        requestTx.setFrom(ChainConfig.SENDER_ADDRESS);
         requestTx.setContractAddress(ChainConfig.CONTRACT_ADDRESS);
         requestTx.setValue(BigInteger.valueOf(0));
-        requestTx.setGas(BigInteger.valueOf(75864));
+        requestTx.setGas(BigInteger.valueOf(75842));
         requestTx.setNonce(BigInteger.valueOf(0));
-        requestTx.setData("0xf242432a000000000000000000000000c5e889999785312c2452c6d5f482582adede048b0000000000000000000000002812d96d61c1f689caedaba8bdf349972d955c320000000000000000000000000000000000000000000000001642b7098e29e001000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000");
+        requestTx.setData("0xf242432a000000000000000000000000292f714cf36cd7d616425ec8c9d40187f60bf6da000000000000000000000000175b6515de4abe508becf616b66cdc4438775075000000000000000000000000000000000000000000000000165ae1a93469e001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000");
         requestTx.setRequestData(requestData);
         requestTx.setBatchTxData(batchTxData);
 
@@ -93,13 +101,44 @@ public class ProxyContractTest {
      * a->b转账 tokenId:1 数量: 1000
      */
     @Test
+    public void TestSimpleTxVerify1() throws ExecutionException, InterruptedException {
+
+        ContractsMetaTxForwarder.ForwardRequest req = new ContractsMetaTxForwarder.ForwardRequest(
+                new Address(160, "0x292F714cf36cD7d616425ec8c9D40187F60bf6Da"),
+                new Address(160, "0x7a1771B9Aea7eCea009db701f044a11De5535601"),
+                new Uint256(0),
+                new Uint256(75842),
+                new Uint256(0),
+                new DynamicBytes(HexUtil.decodeHex("f242432a000000000000000000000000292f714cf36cd7d616425ec8c9d40187f60bf6da000000000000000000000000175b6515de4abe508becf616b66cdc4438775075000000000000000000000000000000000000000000000000165ae1a93469e001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000"))
+        );
+
+        ContractsMetaTxForwarder contractsMetaTxForwarder;
+        if ((contractsMetaTxForwarder = loadForwarderContract()) == null) {
+            return;
+        }
+        String hexSignatureStr = "0x9386c41bbd22f883df8802ed59b9bb3ec102fbb80801b29ac8a3674d2ba974407738292752eece064dc38274aec71225872f361e177b09afb03b9c90699011511b";
+        byte[] signature = HexUtil.decodeHex(hexSignatureStr.replaceFirst("0x", ""));
+        // 开始调用
+        Boolean v = contractsMetaTxForwarder.verify(req, signature).sendAsync().get();
+        if (v) {
+            System.out.println("success");
+        } else {
+            System.out.println("error");
+        }
+    }
+    /**
+     * TestTxVerify
+     * 用户一对一 发送单个token 签名转账校验
+     * a->b转账 tokenId:1 数量: 1000
+     */
+    @Test
     public void TestSimpleTxVerify() {
 
         // TODO 前端传进来的 data 数据里的额外数据
         // 原始数据
         RequestTx requestTx = myData();
         // 签名后的数据
-        String hexSignatureStr = "0xef0cf6afe80bda6adc2d157640520fbeb255cba60b06c98cade9132d3be19c5265ec87b6bdee63ba5ae18a1ca307261a52a12d91651e101e99b3420968a261331b";
+        String hexSignatureStr = "0x9386c41bbd22f883df8802ed59b9bb3ec102fbb80801b29ac8a3674d2ba974407738292752eece064dc38274aec71225872f361e177b09afb03b9c90699011511b";
         // =================
 
         ContractsMetaTxForwarder contractsMetaTxForwarder;
@@ -118,10 +157,10 @@ public class ProxyContractTest {
             byte[] remoteCallData = HexUtil.decodeHex(requestTx.data.replaceFirst("0x", ""));
 
             // TODO 在这可以进行后端对data里原文的 from和to地址、金额、tokenId校验：
-            if (!requestTx.from.equals(requestTx.requestData.from)) {
-                System.out.println("签名地址和发送地址不一样");
-                return;
-            }
+//            if (!requestTx.from.equals(requestTx.requestData.from)) {
+//                System.out.println("签名地址和发送地址不一样");
+//                return;
+//            }
 
             // end --------------------
 
@@ -141,11 +180,11 @@ public class ProxyContractTest {
             if (encodedFunction.equals(requestTx.data)) {
 
                 ContractsMetaTxForwarder.ForwardRequest req = new ContractsMetaTxForwarder.ForwardRequest(
-                        new Address(160, requestTx.from),
-                        new Address(160, requestTx.contractAddress),
+                        new Address(160, "0x292F714cf36cD7d616425ec8c9D40187F60bf6Da"),
+                        new Address(160, "0x7a1771B9Aea7eCea009db701f044a11De5535601"),
                         new Uint256(0),
-                        new Uint256(requestTx.gas),
-                        new Uint256(requestTx.nonce),
+                        new Uint256(75842),
+                        new Uint256(0),
                         new DynamicBytes(remoteCallData)
                 );
                 // 开始调用

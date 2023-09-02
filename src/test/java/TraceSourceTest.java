@@ -18,7 +18,8 @@ public class TraceSourceTest {
         TransactionManager bridgeTokenTxManager = new RawTransactionManager(
                 ChainConfig.WEB3J,
                 ChainConfig.CREDENTIALS,
-                ChainConfig.CHAIN_ID
+                ChainConfig.CHAIN_ID,
+                15, 1000
         );
         ContractsTraceSource contractsTraceSource = ContractsTraceSource.load(
                 ChainConfig.TRACE_SOURCE_CONTRACT_ADDRESS, web3j, bridgeTokenTxManager, new DefaultGasProvider());
@@ -34,28 +35,72 @@ public class TraceSourceTest {
         return contractsTraceSource;
     }
 
+    @Test
+    public void GetContractBINARY() {
+        ContractsTraceSource contractsMetaTxForwarder;
+        if ((contractsMetaTxForwarder = loadContractsTraceSource()) == null) {
+            return;
+        }
+    }
 
+
+    /**
+     * TestStoreSource
+     * 进行合约存储和查询测试
+     */
+    @Test
+    public void TestStoreSource() {
+        String dataJson = "{\n" +
+                "        \"\\u66f4\\u65b0hash\": \"bba5be284d0e6f39c91944cb646dae4a\",\n" +
+                "        \"\\u4f1a\\u5458id\": \"141771\",\n" +
+                "        \"\\u4f1a\\u5458\\u4fe1\\u606f\": \"hash:1586953570857521153\",\n" +
+                "        \"\\u5f53\\u524d\\u72b6\\u6001\": \"\\u5df2\\u6536\\u8d27\",\n" +
+                "        \"\\u8ba2\\u5355\\u7f16\\u53f7\": \"1640017770636791808-400\",\n" +
+                "        \"\\u4e0b\\u5355\\u65f6\\u95f4\": \"2023-03-26 23:48:01\",\n" +
+                "        \"\\u4ed8\\u6b3e\\u65f6\\u95f4\": \"2023-03-26 23:48:23\",\n" +
+                "        \"\\u6536\\u8d27\\u4eba\": \"\\u5434**\",\n" +
+                "        \"\\u5546\\u54c1\\u91d1\\u989d\": \"32.09\",\n" +
+                "        \"\\u8ba2\\u5355\\u91d1\\u989d\": \"32.09\",\n" +
+                "        \"\\u5730\\u5740\": \"\\u6c5f\\u82cf\\u5e38\\u5dde\\u5e02\\u5929\\u5b81\\u533a**1\\u5e62401\",\n" +
+                "        \"\\u7535\\u8bdd\": \"**3870\",\n" +
+                "        \"\\u3010\\u8106\\u5ae9\\u723d\\u53e3\\uff0c\\u73b0\\u6458\\u73b0\\u53d1\\u3011\\u5c71\\u4e1c\\u5bff\\u5149\\u6c34\\u679c\\u9ec4\\u74dc \\u5c0f\\u9752\\u74dc \\u751f\\u5403\\u5373\\u98df2\\u65a4\\/3\\u65a4\\/5\\u65a4_3\\u65a4\\u88c5--\\u6c34\\u679c\\u9ec4\\u74dc\\/\\u7bb1\\u88c5_1\": 1\n" +
+                "    }";
+        ContractsTraceSource contractsStoreSource;
+        if ((contractsStoreSource = loadContractsTraceSource()) == null) {
+            return;
+        }
+        try {
+            long nowTime = System.currentTimeMillis();
+            // 进行存储
+            TransactionReceipt v = contractsStoreSource.StoreSource(dataJson).sendAsync().get();
+            System.out.println(System.currentTimeMillis() - nowTime);
+
+            List<ContractsTraceSource.StoreLogEventResponse> result = contractsStoreSource.getStoreLogEvents(v);
+            String onlyCode = Utils.bytesToHexString(result.get(0).param0);
+            // 存储后的key值
+            System.out.println("存储后的key值:0x" + onlyCode);
+            // 进行查询
+            String res = contractsStoreSource.FindSource(Utils.hexStringToByteArray(onlyCode)).sendAsync().get();
+            System.out.println("查询结果:" + res);
+
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * TestTxVerify
      * 用户一对一 发送单个token 签名转账校验
      * a->b转账 tokenId:1 数量: 1000
      */
     @Test
-    public void TestStoreSource() {
+    public void TestFindStoreSource() {
         ContractsTraceSource contractsStoreSource;
         if ((contractsStoreSource = loadContractsTraceSource()) == null) {
             return;
         }
         try {
-            // 进行存储
-            TransactionReceipt v = contractsStoreSource.StoreSource("{'orderSn':'20230226000512186','outOrderNo':'20230226000512186','orderSellerName':'名牌商品汇','orderTypeName':'共信鼎','thirdId':'1629512832550830080-5','jdOrderNum':'260227672795','customerName':'共信鼎','consignee':'夏黎','mobilePhoneNumber':'13454472782','inTheArea':'浙江 杭州市 余杭区','detailedAddress':'余杭街道永建洪桐吴岐山12号','totalAmount':null,'payJiuLingAmount':18.16,'payZeroCoupon':0.00,'totalNum':1,'logisticsCost':10.00,'createTime':null,'orderTime':'2023-02-25 16:05:11','goodsCourier':null,'ecmJDOrderGoodDtos':[{'serNum':1,'kidOrderNumber':null,'barCode':'','name':'百草味混合装冻干水果30g/袋 芒果干草莓脆休闲办公室零食草莓干黄桃干','format':'颜色:【冻干水果】6种混合口味30g型号:默认','goodsNum':1,'purchasingPrice':8.0,'retailPrice':8.16,'returnNum':0,'amountPercentage':8.16}]}").sendAsync().get();
-            List<ContractsTraceSource.StoreLogEventResponse> result = contractsStoreSource.getStoreLogEvents(v);
-            String onlyCode = Utils.bytesToHexString(result.get(0).param0);
-
-            // 存储后的key值
-            System.out.println("存储后的key值:" + onlyCode);
             // 进行查询
-            String res = contractsStoreSource.FindSource(Utils.hexStringToByteArray(onlyCode)).sendAsync().get();
+            String res = contractsStoreSource.FindSource(Utils.hexStringToByteArray("3287E6385C635CB0E292F3E9752198A767356049F2E618295FC3EFE1F1C07753")).sendAsync().get();
             System.out.println("查询结果:" + res);
 
         } catch (InterruptedException | ExecutionException e) {

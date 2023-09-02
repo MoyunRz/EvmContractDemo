@@ -1,5 +1,8 @@
 import com.contract.proxy.Common1155Contract;
+import com.contract.proxy.ContractsMetaTxForwarder;
+import com.contract.trace.ContractsTraceSource;
 import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.tx.RawTransactionManager;
@@ -40,8 +43,6 @@ public class ERCService {
         }
         return common1155Contract;
     }
-
-
     public static BigInteger getBalanceByPlateAccount(String account,BigInteger tokenId) {
         try {
             Common1155Contract common1155Contract;

@@ -3,6 +3,8 @@ import cn.hutool.core.util.HexUtil;
 import com.alibaba.fastjson.JSONObject;
 
 import com.contract.proxy.Common1155Contract;
+import com.contract.proxy.ContractsMetaTxForwarder;
+import com.contract.trace.ContractsTraceSource;
 import net.evm.abi.decoder.AbiDecoder;
 import net.evm.abi.decoder.DecodedFunctionCall;
 import org.junit.Test;
@@ -17,8 +19,13 @@ import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
+import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.*;
+import org.web3j.tx.RawTransactionManager;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.gas.ContractGasProvider;
+import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 import org.web3j.utils.Strings;
@@ -32,6 +39,16 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class ContractTest {
+
+
+
+    @Test
+    public void GetContractBINARY() {
+        Common1155Contract common1155Contract;
+        if ((common1155Contract = ERCService.loadCommon1155Contract()) == null) {
+            return;
+        }
+    }
 
 
     @Test
@@ -107,8 +124,8 @@ public class ContractTest {
         byte[] data = HexUtil.decodeHex(hex);
 
         tos.add("0x2812d96d61c1f689caedaba8bdf349972d955c32");
-        ids.add(BigInteger.valueOf(Long.parseLong("1604045668965015553")));
-        amounts.add(BigInteger.valueOf(100));
+        ids.add(BigInteger.valueOf(Long.parseLong("1")));
+        amounts.add(BigInteger.valueOf(1));
 
         try {
             TransactionReceipt mintReceipt = common1155Contract.exchangeMint(tos, ids, amounts, txType, data).sendAsync().get();
@@ -159,7 +176,6 @@ public class ContractTest {
         // a->c (2:20),
         // a->d (3:50)
         BigInteger txType = BigInteger.valueOf(0);
-
 
         JSONObject object = new JSONObject();
         //string
@@ -258,10 +274,10 @@ public class ContractTest {
      */
     @Test
     public void TestEthSendTransaction() {
-        String from = ChainConfig.SENDER_ADDRESS;
-        String to = ChainConfig.TO_ADDRESS;
-        String privateKey = ChainConfig.PRIVATE_KEY;
-        BigInteger value = BigInteger.valueOf(1000000000);
+        String from = "0xF35C07af7E8Fa531E41e0E0D253c52c03Cf62f5B";
+        String to = "0xAF3D2D591Ca3635b552570E2DC014b4e3C1eEc58";
+        String privateKey = "a87edd8cea131969cc57ea60780ecf56ad39587ec096175c8f6bc38a779f3339";
+        BigInteger value = BigInteger.valueOf(100);
 
         try {
             BigInteger gasPrice = ChainConfig.getGasPrice();
@@ -270,7 +286,7 @@ public class ContractTest {
             Credentials credentials = Credentials.create(privateKey);
 
             BigInteger nonce = ERCService.getNonceByFrom(from);
-
+            System.out.println(nonce);
             //创建RawTransaction交易对象
             RawTransaction rawTransaction = RawTransaction.createEtherTransaction(nonce, gasPrice, gasLimit, to, value);
             //签名Transaction，这里要对交易做签名
@@ -394,7 +410,7 @@ public class ContractTest {
     @Test
     public void testGetTxReceiptByHash() {
         try {
-            EthGetTransactionReceipt ethGetTransactionReceipt = ChainConfig.WEB3J.ethGetTransactionReceipt("0x7704a042c5289f6687c89530f1a251c3acec2e51ca179395808ab6a26802282a").sendAsync().get();
+            EthGetTransactionReceipt ethGetTransactionReceipt = ChainConfig.WEB3J.ethGetTransactionReceipt("0x58098608a3c6efcde39de53a47a3b2ca3a43489c4545097af91ccf8b5e374d47").sendAsync().get();
             String hex = ethGetTransactionReceipt.getResult().getStatus();
             // 判断状态是否成功
             if (!Strings.isEmpty(hex)) {
