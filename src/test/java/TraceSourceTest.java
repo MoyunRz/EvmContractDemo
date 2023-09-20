@@ -1,7 +1,10 @@
 
+import com.contract.proxy.ContractsMetaTxForwarder;
 import com.contract.trace.ContractsTraceSource;
 import org.junit.Test;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
+import org.web3j.protocol.core.methods.response.EthGetCode;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
@@ -13,36 +16,14 @@ import java.util.concurrent.ExecutionException;
 
 public class TraceSourceTest {
 
-    public static ContractsTraceSource loadContractsTraceSource() {
-        Web3j web3j = ChainConfig.WEB3J;
-        TransactionManager bridgeTokenTxManager = new RawTransactionManager(
-                ChainConfig.WEB3J,
-                ChainConfig.CREDENTIALS,
-                ChainConfig.CHAIN_ID,
-                15, 1000
-        );
-        ContractsTraceSource contractsTraceSource = ContractsTraceSource.load(
-                ChainConfig.TRACE_SOURCE_CONTRACT_ADDRESS, web3j, bridgeTokenTxManager, new DefaultGasProvider());
-        try {
-            if (!contractsTraceSource.isValid()) {
-                System.out.println("加载TraceSource合约不是有效的");
-                return null;
-            }
-        } catch (IOException e) {
-            System.out.println("验证TraceSource合约io流有问题");
-            return null;
-        }
-        return contractsTraceSource;
-    }
 
     @Test
     public void GetContractBINARY() {
         ContractsTraceSource contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = loadContractsTraceSource()) == null) {
+        if ((contractsMetaTxForwarder = TraceStoreService.loadContractsTraceSource()) == null) {
             return;
         }
     }
-
 
     /**
      * TestStoreSource
@@ -66,7 +47,7 @@ public class TraceSourceTest {
                 "        \"\\u3010\\u8106\\u5ae9\\u723d\\u53e3\\uff0c\\u73b0\\u6458\\u73b0\\u53d1\\u3011\\u5c71\\u4e1c\\u5bff\\u5149\\u6c34\\u679c\\u9ec4\\u74dc \\u5c0f\\u9752\\u74dc \\u751f\\u5403\\u5373\\u98df2\\u65a4\\/3\\u65a4\\/5\\u65a4_3\\u65a4\\u88c5--\\u6c34\\u679c\\u9ec4\\u74dc\\/\\u7bb1\\u88c5_1\": 1\n" +
                 "    }";
         ContractsTraceSource contractsStoreSource;
-        if ((contractsStoreSource = loadContractsTraceSource()) == null) {
+        if ((contractsStoreSource = TraceStoreService.loadContractsTraceSource()) == null) {
             return;
         }
         try {
@@ -95,7 +76,7 @@ public class TraceSourceTest {
     @Test
     public void TestFindStoreSource() {
         ContractsTraceSource contractsStoreSource;
-        if ((contractsStoreSource = loadContractsTraceSource()) == null) {
+        if ((contractsStoreSource = TraceStoreService.loadContractsTraceSource()) == null) {
             return;
         }
         try {

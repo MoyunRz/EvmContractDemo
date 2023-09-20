@@ -9,6 +9,9 @@ import org.web3j.abi.datatypes.*;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.*;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
+import org.web3j.protocol.core.Ethereum;
+import org.web3j.protocol.core.methods.response.EthGetCode;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
@@ -29,31 +32,12 @@ import java.util.concurrent.ExecutionException;
 
 public class ProxyContractTest {
 
-    public static ContractsMetaTxForwarder loadForwarderContract() {
-        Web3j web3j = ChainConfig.WEB3J;
-        TransactionManager bridgeTokenTxManager = new RawTransactionManager(
-                ChainConfig.WEB3J,
-                ChainConfig.CREDENTIALS,
-                ChainConfig.CHAIN_ID
-        );
-        ContractsMetaTxForwarder contractsMetaTxForwarder = ContractsMetaTxForwarder.load(
-                ChainConfig.PROXY_CONTRACT_ADDRESS, web3j, bridgeTokenTxManager, new DefaultGasProvider());
-        try {
-            if (!contractsMetaTxForwarder.isValid()) {
-                System.out.println("加载Proxy合约不是有效的");
-                return null;
-            }
-        } catch (IOException e) {
-            System.out.println("验证Proxy合约io流有问题");
-            return null;
-        }
-        return contractsMetaTxForwarder;
-    }
+
 
     @Test
     public void GetContractBINARY() {
         ContractsMetaTxForwarder contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = loadForwarderContract()) == null) {
+        if ((contractsMetaTxForwarder = MetaTxService.loadForwarderContract()) == null) {
             return;
         }
     }
@@ -113,7 +97,7 @@ public class ProxyContractTest {
         );
 
         ContractsMetaTxForwarder contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = loadForwarderContract()) == null) {
+        if ((contractsMetaTxForwarder = MetaTxService.loadForwarderContract()) == null) {
             return;
         }
         String hexSignatureStr = "0x9386c41bbd22f883df8802ed59b9bb3ec102fbb80801b29ac8a3674d2ba974407738292752eece064dc38274aec71225872f361e177b09afb03b9c90699011511b";
@@ -142,7 +126,7 @@ public class ProxyContractTest {
         // =================
 
         ContractsMetaTxForwarder contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = loadForwarderContract()) == null) {
+        if ((contractsMetaTxForwarder = MetaTxService.loadForwarderContract()) == null) {
             return;
         }
         try {
@@ -221,7 +205,7 @@ public class ProxyContractTest {
 
 
         ContractsMetaTxForwarder contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = loadForwarderContract()) == null) {
+        if ((contractsMetaTxForwarder = MetaTxService.loadForwarderContract()) == null) {
             return;
         }
         try {
@@ -300,7 +284,7 @@ public class ProxyContractTest {
         // =================
 
         ContractsMetaTxForwarder contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = loadForwarderContract()) == null) {
+        if ((contractsMetaTxForwarder = MetaTxService.loadForwarderContract()) == null) {
             return;
         }
         try {
@@ -359,7 +343,6 @@ public class ProxyContractTest {
                 Collections.<TypeReference<?>>emptyList());
         // 进行函数编码
         String encodedFunction = FunctionEncoder.encode(function);
-
         // 进行签名
     }
 }

@@ -3,7 +3,9 @@ import com.contract.proxy.ContractsMetaTxForwarder;
 import com.contract.trace.ContractsTraceSource;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthGetCode;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
@@ -30,18 +32,23 @@ public class ERCService {
                 credentials,
                 ChainConfig.CHAIN_ID
         );
-        ContractGasProvider contractGasProvider = new DefaultGasProvider();
-        Common1155Contract common1155Contract = Common1155Contract.load(ChainConfig.CONTRACT_ADDRESS, ChainConfig.WEB3J, bridgeTokenTxManager, contractGasProvider);
         try {
+            EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.CONTRACT_ADDRESS, DefaultBlockParameter.valueOf("latest"))
+                    .sendAsync()
+                    .get();
+            ContractsMetaTxForwarder.BINARY = String.valueOf(ethGetCode);
+            ContractGasProvider contractGasProvider = new DefaultGasProvider();
+            Common1155Contract common1155Contract = Common1155Contract.load(ChainConfig.CONTRACT_ADDRESS, ChainConfig.WEB3J, bridgeTokenTxManager, contractGasProvider);
+
             if (!common1155Contract.isValid()) {
                 System.out.println("加载1155合约不是有效的");
                 return null;
             }
-        } catch (IOException e) {
+            return common1155Contract;
+        } catch (IOException | InterruptedException | ExecutionException e) {
             System.out.println("验证1155合约io流有问题");
             return null;
         }
-        return common1155Contract;
     }
     public static BigInteger getBalanceByPlateAccount(String account,BigInteger tokenId) {
         try {

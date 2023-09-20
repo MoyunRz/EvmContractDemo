@@ -39,9 +39,6 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class ContractTest {
-
-
-
     @Test
     public void GetContractBINARY() {
         Common1155Contract common1155Contract;
@@ -49,7 +46,6 @@ public class ContractTest {
             return;
         }
     }
-
 
     @Test
     public void testHex() {
