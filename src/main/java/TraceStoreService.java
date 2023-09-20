@@ -12,19 +12,10 @@ import java.util.concurrent.ExecutionException;
 
 public class TraceStoreService {
     public static ContractsTraceSource loadContractsTraceSource() {
-        TransactionManager bridgeTokenTxManager = new RawTransactionManager(
-                ChainConfig.WEB3J,
-                ChainConfig.CREDENTIALS,
-                ChainConfig.CHAIN_ID,
-                15, 1000
-        );
         try {
-            EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.TRACE_SOURCE_CONTRACT_ADDRESS, DefaultBlockParameter.valueOf("latest")).sendAsync().get();
+            EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.TRACE_SOURCE_CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION).sendAsync().get();
             ContractsMetaTxForwarder.BINARY = String.valueOf(ethGetCode);
-
-            ContractsTraceSource contractsTraceSource = ContractsTraceSource.load(
-                    ChainConfig.TRACE_SOURCE_CONTRACT_ADDRESS, ChainConfig.WEB3J, bridgeTokenTxManager, new DefaultGasProvider());
-
+            ContractsTraceSource contractsTraceSource = ContractsTraceSource.load(ChainConfig.TRACE_SOURCE_CONTRACT_ADDRESS, ChainConfig.WEB3J, ChainConfig.BRIDGE_MANAGER, new DefaultGasProvider());
             if (!contractsTraceSource.isValid()) {
                 System.out.println("加载TraceSource合约不是有效的");
                 return null;

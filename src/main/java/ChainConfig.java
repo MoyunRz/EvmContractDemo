@@ -1,7 +1,11 @@
 
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.RawTransactionManager;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Async;
 
 import java.math.BigInteger;
@@ -29,8 +33,16 @@ public class ChainConfig {
     static Credentials CREDENTIALS = Credentials.create(ChainConfig.PRIVATE_KEY);
     // 链ID
     static long CHAIN_ID = 90;
+    static DefaultBlockParameter CHAIN_VERSION = DefaultBlockParameter.valueOf("latest");
+
     // 获取Gas 也就是手续费
     static public BigInteger getGasPrice() throws ExecutionException, InterruptedException {
         return ChainConfig.WEB3J.ethGasPrice().sendAsync().get().getGasPrice();
     }
+
+    static TransactionManager BRIDGE_MANAGER = new RawTransactionManager(
+            ChainConfig.WEB3J,
+            ChainConfig.CREDENTIALS,
+            ChainConfig.CHAIN_ID
+    );
 }

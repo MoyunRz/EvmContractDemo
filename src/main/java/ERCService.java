@@ -26,19 +26,12 @@ import java.util.concurrent.ExecutionException;
 public class ERCService {
 
     public static Common1155Contract loadCommon1155Contract() {
-        TransactionManager bridgeTokenTxManager = new RawTransactionManager(
-                ChainConfig.WEB3J,
-                ChainConfig.CREDENTIALS,
-                ChainConfig.CHAIN_ID
-        );
         try {
-            EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.CONTRACT_ADDRESS, DefaultBlockParameter.valueOf("latest"))
+            EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION)
                     .sendAsync()
                     .get();
             ContractsMetaTxForwarder.BINARY = String.valueOf(ethGetCode);
-            ContractGasProvider contractGasProvider = new DefaultGasProvider();
-            Common1155Contract common1155Contract = Common1155Contract.load(ChainConfig.CONTRACT_ADDRESS, ChainConfig.WEB3J, bridgeTokenTxManager, contractGasProvider);
-
+            Common1155Contract common1155Contract = Common1155Contract.load(ChainConfig.CONTRACT_ADDRESS, ChainConfig.WEB3J, ChainConfig.BRIDGE_MANAGER, new DefaultGasProvider());
             if (!common1155Contract.isValid()) {
                 System.out.println("加载1155合约不是有效的");
                 return null;
