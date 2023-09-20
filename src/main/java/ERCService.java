@@ -26,10 +26,9 @@ import java.util.concurrent.ExecutionException;
 public class ERCService {
 
     public static Common1155Contract loadCommon1155Contract() {
-        Credentials credentials = ChainConfig.CREDENTIALS;
         TransactionManager bridgeTokenTxManager = new RawTransactionManager(
                 ChainConfig.WEB3J,
-                credentials,
+                ChainConfig.CREDENTIALS,
                 ChainConfig.CHAIN_ID
         );
         try {

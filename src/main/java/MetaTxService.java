@@ -12,21 +12,18 @@ import java.util.concurrent.ExecutionException;
 public class MetaTxService {
 
     public static ContractsMetaTxForwarder loadForwarderContract() {
-        Web3j web3j = ChainConfig.WEB3J;
         TransactionManager bridgeTokenTxManager = new RawTransactionManager(
                 ChainConfig.WEB3J,
                 ChainConfig.CREDENTIALS,
                 ChainConfig.CHAIN_ID
         );
         try {
-
-            EthGetCode ethGetCode = web3j.ethGetCode(ChainConfig.PROXY_CONTRACT_ADDRESS, DefaultBlockParameter.valueOf("latest"))
+            EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.PROXY_CONTRACT_ADDRESS, DefaultBlockParameter.valueOf("latest"))
                     .sendAsync()
                     .get();
             ContractsMetaTxForwarder.BINARY = String.valueOf(ethGetCode);
-
             ContractsMetaTxForwarder contractsMetaTxForwarder = ContractsMetaTxForwarder.load(
-                    ChainConfig.PROXY_CONTRACT_ADDRESS, web3j, bridgeTokenTxManager, new DefaultGasProvider());
+                    ChainConfig.PROXY_CONTRACT_ADDRESS, ChainConfig.WEB3J, bridgeTokenTxManager, new DefaultGasProvider());
             if (!contractsMetaTxForwarder.isValid()) {
                 System.out.println("加载Proxy合约不是有效的");
                 return null;
