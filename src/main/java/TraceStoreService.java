@@ -1,10 +1,6 @@
 import com.contract.proxy.ContractsMetaTxForwarder;
 import com.contract.trace.ContractsTraceSource;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.methods.response.EthGetCode;
-import org.web3j.tx.RawTransactionManager;
-import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.io.IOException;

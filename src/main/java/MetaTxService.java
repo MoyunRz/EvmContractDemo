@@ -15,9 +15,7 @@ public class MetaTxService {
         try {
             EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.PROXY_CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION).sendAsync().get();
             ContractsMetaTxForwarder.BINARY = String.valueOf(ethGetCode);
-
-            ContractsMetaTxForwarder contractsMetaTxForwarder = ContractsMetaTxForwarder.load(
-                    ChainConfig.PROXY_CONTRACT_ADDRESS, ChainConfig.WEB3J, ChainConfig.BRIDGE_MANAGER, new DefaultGasProvider());
+            ContractsMetaTxForwarder contractsMetaTxForwarder = ContractsMetaTxForwarder.load(ChainConfig.PROXY_CONTRACT_ADDRESS, ChainConfig.WEB3J, ChainConfig.BRIDGE_MANAGER, new DefaultGasProvider());
             if (!contractsMetaTxForwarder.isValid()) {
                 System.out.println("加载Proxy合约不是有效的");
                 return null;

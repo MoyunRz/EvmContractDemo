@@ -1,15 +1,8 @@
 import com.contract.proxy.Common1155Contract;
 import com.contract.proxy.ContractsMetaTxForwarder;
-import com.contract.trace.ContractsTraceSource;
-import org.web3j.crypto.Credentials;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetCode;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
-import org.web3j.tx.RawTransactionManager;
-import org.web3j.tx.TransactionManager;
-import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -27,9 +20,7 @@ public class ERCService {
 
     public static Common1155Contract loadCommon1155Contract() {
         try {
-            EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION)
-                    .sendAsync()
-                    .get();
+            EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION).sendAsync().get();
             ContractsMetaTxForwarder.BINARY = String.valueOf(ethGetCode);
             Common1155Contract common1155Contract = Common1155Contract.load(ChainConfig.CONTRACT_ADDRESS, ChainConfig.WEB3J, ChainConfig.BRIDGE_MANAGER, new DefaultGasProvider());
             if (!common1155Contract.isValid()) {
