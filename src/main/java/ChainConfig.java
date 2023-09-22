@@ -14,9 +14,9 @@ import java.util.concurrent.ExecutionException;
 public class ChainConfig {
 
     // 发送者地址
-    static String SENDER_ADDRESS = "0xB58656873901b66bdfB3C46B8b2Ff2286159ebbc";
+    static String SENDER_ADDRESS = "0xA433963e078609811c228e3a8AA85e60B87F532d";
     // 发送者私钥
-    static String PRIVATE_KEY = "e853d16d26634761ddcd1e13b5978a5115aa3c198137f3150b7af686b2b9ee28";
+    static String PRIVATE_KEY = "aa24ba816a8d8025c9c4af1c15aa1e2f69f86238441fea189d9da0cf85b8f40b";
     // 接收者地址
     static String TO_ADDRESS = "0x29255f2a67Ec9b1356De88457323a52388c4B3AD";
     // 代理合约地址
@@ -24,10 +24,10 @@ public class ChainConfig {
     // 1155合约地址
     static String CONTRACT_ADDRESS = "0x5d4232D8D4AB5bd25Ec594eAeAC507EebcEAE4b5";
     // 溯源存储合约地址
-    static String TRACE_SOURCE_CONTRACT_ADDRESS = "0xFad2e66c49A193f3ffDed7e59931D3B0F8089cB5";
+    static String TRACE_SOURCE_CONTRACT_ADDRESS = "0x4AB443a69281BA11a441F90c7b416889B82E6A48";
 
     // 华为云服务器 链的RPC地址 chain id = 9090
-     static Web3j WEB3J = Web3j.build(new HttpService("http://121.41.66.213:9933"));
+     static Web3j WEB3J = Web3j.build(new HttpService("http://119.23.220.135:9933"));
 
     // 加载私钥
     static Credentials CREDENTIALS = Credentials.create(ChainConfig.PRIVATE_KEY);

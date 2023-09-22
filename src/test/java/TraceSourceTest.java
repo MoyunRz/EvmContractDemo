@@ -46,28 +46,60 @@ public class TraceSourceTest {
                 "        \"\\u7535\\u8bdd\": \"**3870\",\n" +
                 "        \"\\u3010\\u8106\\u5ae9\\u723d\\u53e3\\uff0c\\u73b0\\u6458\\u73b0\\u53d1\\u3011\\u5c71\\u4e1c\\u5bff\\u5149\\u6c34\\u679c\\u9ec4\\u74dc \\u5c0f\\u9752\\u74dc \\u751f\\u5403\\u5373\\u98df2\\u65a4\\/3\\u65a4\\/5\\u65a4_3\\u65a4\\u88c5--\\u6c34\\u679c\\u9ec4\\u74dc\\/\\u7bb1\\u88c5_1\": 1\n" +
                 "    }";
-        ContractsTraceSource contractsStoreSource;
-        if ((contractsStoreSource = TraceStoreService.loadContractsTraceSource()) == null) {
-            return;
-        }
+
+        ContractsTraceSource storeSource = TraceStoreService.LoadContracts();
         try {
             long nowTime = System.currentTimeMillis();
             // 进行存储
-            TransactionReceipt v = contractsStoreSource.StoreSource(dataJson).sendAsync().get();
+            TransactionReceipt v = storeSource.StoreSource(dataJson).sendAsync().get();
             System.out.println(System.currentTimeMillis() - nowTime);
 
-            List<ContractsTraceSource.StoreLogEventResponse> result = contractsStoreSource.getStoreLogEvents(v);
+            List<ContractsTraceSource.StoreLogEventResponse> result = storeSource.getStoreLogEvents(v);
             String onlyCode = Utils.bytesToHexString(result.get(0).param0);
             // 存储后的key值
             System.out.println("存储后的key值:0x" + onlyCode);
             // 进行查询
-            String res = contractsStoreSource.FindSource(Utils.hexStringToByteArray(onlyCode)).sendAsync().get();
+            String res = storeSource.FindSource(Utils.hexStringToByteArray(onlyCode)).sendAsync().get();
             System.out.println("查询结果:" + res);
 
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * TestStoreSource
+     * 进行合约存储和查询测试
+     */
+    @Test
+    public void TestBatchStore() {
+        List<String> dataJson = new ArrayList<>();
+        dataJson.add("{'a':'1','b':'2'}");
+        dataJson.add("{'c':'1','d':'2'}");
+        dataJson.add("{'e':'1','f':'2'}");
+        dataJson.add("{'g':'1','h':'2'}");
+        ContractsTraceSource storeSource = TraceStoreService.LoadContracts();
+        try {
+            long nowTime = System.currentTimeMillis();
+            // 进行存储
+            TransactionReceipt v = storeSource.BatchStore(dataJson).sendAsync().get();
+            System.out.println(System.currentTimeMillis() - nowTime);
+
+            List<ContractsTraceSource.StoreLogEventResponse> result = storeSource.getStoreLogEvents(v);
+
+            for (ContractsTraceSource.StoreLogEventResponse r : result) {
+                String onlyCode = Utils.bytesToHexString(r.param0);
+                // 存储后的key值
+                System.out.println("存储后的key值:0x" + onlyCode);
+                // 进行查询
+                String res = storeSource.FindSource(Utils.hexStringToByteArray(onlyCode)).sendAsync().get();
+                System.out.println("查询结果:" + res);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * TestTxVerify
      * 用户一对一 发送单个token 签名转账校验
@@ -75,13 +107,10 @@ public class TraceSourceTest {
      */
     @Test
     public void TestFindStoreSource() {
-        ContractsTraceSource contractsStoreSource;
-        if ((contractsStoreSource = TraceStoreService.loadContractsTraceSource()) == null) {
-            return;
-        }
+        ContractsTraceSource storeSource = TraceStoreService.LoadContracts();
         try {
             // 进行查询
-            String res = contractsStoreSource.FindSource(Utils.hexStringToByteArray("3287E6385C635CB0E292F3E9752198A767356049F2E618295FC3EFE1F1C07753")).sendAsync().get();
+            String res = storeSource.FindSource(Utils.hexStringToByteArray("3287E6385C635CB0E292F3E9752198A767356049F2E618295FC3EFE1F1C07753")).sendAsync().get();
             System.out.println("查询结果:" + res);
 
         } catch (InterruptedException | ExecutionException e) {

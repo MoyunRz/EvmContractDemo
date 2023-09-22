@@ -95,15 +95,11 @@ public class ProxyContractTest {
                 new Uint256(0),
                 new DynamicBytes(HexUtil.decodeHex("f242432a000000000000000000000000292f714cf36cd7d616425ec8c9d40187f60bf6da000000000000000000000000175b6515de4abe508becf616b66cdc4438775075000000000000000000000000000000000000000000000000165ae1a93469e001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000"))
         );
-
-        ContractsMetaTxForwarder contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = MetaTxService.loadForwarderContract()) == null) {
-            return;
-        }
+        ContractsMetaTxForwarder metaTx = MetaTxService.LoadMetaTxContracts();
         String hexSignatureStr = "0x9386c41bbd22f883df8802ed59b9bb3ec102fbb80801b29ac8a3674d2ba974407738292752eece064dc38274aec71225872f361e177b09afb03b9c90699011511b";
         byte[] signature = HexUtil.decodeHex(hexSignatureStr.replaceFirst("0x", ""));
         // 开始调用
-        Boolean v = contractsMetaTxForwarder.verify(req, signature).sendAsync().get();
+        Boolean v = metaTx.verify(req, signature).sendAsync().get();
         if (v) {
             System.out.println("success");
         } else {
@@ -125,13 +121,10 @@ public class ProxyContractTest {
         String hexSignatureStr = "0x9386c41bbd22f883df8802ed59b9bb3ec102fbb80801b29ac8a3674d2ba974407738292752eece064dc38274aec71225872f361e177b09afb03b9c90699011511b";
         // =================
 
-        ContractsMetaTxForwarder contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = MetaTxService.loadForwarderContract()) == null) {
-            return;
-        }
+        ContractsMetaTxForwarder metaTx = MetaTxService.LoadMetaTxContracts();
         try {
             // 测试时获取nonce,平时需要前端传
-            BigInteger nonce = contractsMetaTxForwarder.getNonce(requestTx.from).sendAsync().get();
+            BigInteger nonce = metaTx.getNonce(requestTx.from).sendAsync().get();
 
             // 前端传签名字符 要记得去掉0x，转换为byte[]
             byte[] signature = HexUtil.decodeHex(hexSignatureStr.replaceFirst("0x", ""));
@@ -172,7 +165,7 @@ public class ProxyContractTest {
                         new DynamicBytes(remoteCallData)
                 );
                 // 开始调用
-                Boolean v = contractsMetaTxForwarder.verify(req, signature).sendAsync().get();
+                Boolean v = metaTx.verify(req, signature).sendAsync().get();
                 if (v) {
                     System.out.println("success");
                 } else {
@@ -204,13 +197,10 @@ public class ProxyContractTest {
         // 初始化的测试数据，前端传
 
 
-        ContractsMetaTxForwarder contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = MetaTxService.loadForwarderContract()) == null) {
-            return;
-        }
+        ContractsMetaTxForwarder metaTx = MetaTxService.LoadMetaTxContracts();
         try {
             // 测试时获取nonce,平时需要前端传
-            BigInteger nonce = contractsMetaTxForwarder.getNonce(requestTx.from).sendAsync().get();
+            BigInteger nonce = metaTx.getNonce(requestTx.from).sendAsync().get();
             // 前端传签名字符 要记得去掉0x，转换为byte[]
             byte[] signature = HexUtil.decodeHex(hexSignatureStr.replaceFirst("0x", ""));
             // 在合约里是递增的
@@ -257,7 +247,7 @@ public class ProxyContractTest {
                 );
 
                 // 开始调用
-                Boolean v = contractsMetaTxForwarder.verify(req, signature).sendAsync().get();
+                Boolean v = metaTx.verify(req, signature).sendAsync().get();
                 if (v) {
                     System.out.println("success");
                 } else {
@@ -283,14 +273,11 @@ public class ProxyContractTest {
         String hexSignatureStr = "0xb365dc90bb71c85c531fad7ef18f3c2c30131a2d54088dcc7bc93613c889122d24053fb233400cfdc1ceb2a59adaedc0e2e005b710e12e55fb987a6767e999a01c";
         // =================
 
-        ContractsMetaTxForwarder contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = MetaTxService.loadForwarderContract()) == null) {
-            return;
-        }
+        ContractsMetaTxForwarder metaTx = MetaTxService.LoadMetaTxContracts();
         try {
 
             // 测试时获取nonce,平时需要前端传
-            BigInteger nonce = contractsMetaTxForwarder.getNonce(requestTx.from).sendAsync().get();
+            BigInteger nonce = metaTx.getNonce(requestTx.from).sendAsync().get();
             // 前端传签名字符 要记得去掉0x，转换为byte[]
             byte[] signature = HexUtil.decodeHex(hexSignatureStr.replaceFirst("0x", ""));
             // 在合约里是递增的
@@ -308,7 +295,7 @@ public class ProxyContractTest {
             );
 
             // 开始调用
-            TransactionReceipt v = contractsMetaTxForwarder.execute(req, signature, req.gas).sendAsync().get();
+            TransactionReceipt v = metaTx.execute(req, signature, req.gas).sendAsync().get();
             System.out.println(v.getTransactionHash());
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();

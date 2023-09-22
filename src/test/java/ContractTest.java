@@ -86,10 +86,7 @@ public class ContractTest {
      */
     @Test
     public void testMintNFT() {
-        Common1155Contract common1155Contract;
-        if ((common1155Contract = ERCService.loadCommon1155Contract()) == null) {
-            return;
-        }
+        Common1155Contract loadNFTContracts = ERCService.LoadNFTContracts();
 
         List<String> tos = new ArrayList<>();           // 发送给谁
         List<BigInteger> ids = new ArrayList<>();       // tokenId
@@ -124,7 +121,7 @@ public class ContractTest {
         amounts.add(BigInteger.valueOf(1));
 
         try {
-            TransactionReceipt mintReceipt = common1155Contract.exchangeMint(tos, ids, amounts, txType, data).sendAsync().get();
+            TransactionReceipt mintReceipt = loadNFTContracts.exchangeMint(tos, ids, amounts, txType, data).sendAsync().get();
             System.out.println(mintReceipt.getTransactionHash());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -138,11 +135,8 @@ public class ContractTest {
     @Test
     public void testGetBalanceByPlateAccount() {
         try {
-            Common1155Contract common1155Contract;
-            if ((common1155Contract = ERCService.loadCommon1155Contract()) == null) {
-                return;
-            }
-            BigInteger balance = common1155Contract.balanceOf(ChainConfig.SENDER_ADDRESS, BigInteger.valueOf(0)).send();
+            Common1155Contract loadNFTContracts = ERCService.LoadNFTContracts();
+            BigInteger balance = loadNFTContracts.balanceOf(ChainConfig.SENDER_ADDRESS, BigInteger.valueOf(0)).send();
             System.out.println(balance);
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,10 +149,7 @@ public class ContractTest {
      */
     @Test
     public void testTxNFT() {
-        Common1155Contract common1155Contract;
-        if ((common1155Contract = ERCService.loadCommon1155Contract()) == null) {
-            return;
-        }
+        Common1155Contract loadNFTContracts = ERCService.LoadNFTContracts();
 
         List<String> tos = new ArrayList<>();           // 发送给谁
         List<BigInteger> ids = new ArrayList<>();       // tokenId
@@ -197,7 +188,7 @@ public class ContractTest {
         amounts.add(BigInteger.valueOf(2));
 
         try {
-            TransactionReceipt mintReceipt = common1155Contract.exchangeTransfer("0x2812d96d61c1f689caedaba8bdf349972d955c32", tos, ids, amounts, txType, data).sendAsync().get();
+            TransactionReceipt mintReceipt = loadNFTContracts.exchangeTransfer("0x2812d96d61c1f689caedaba8bdf349972d955c32", tos, ids, amounts, txType, data).sendAsync().get();
             System.out.println(mintReceipt.getTransactionHash());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -212,10 +203,7 @@ public class ContractTest {
      */
     @Test
     public void testTxNFTWithout() {
-        Common1155Contract common1155Contract;
-        if ((common1155Contract = ERCService.loadCommon1155Contract()) == null) {
-            return;
-        }
+        Common1155Contract loadNFTContracts = ERCService.LoadNFTContracts();
 
         List<String> tos = new ArrayList<>();           // 发送给谁
         List<BigInteger> ids = new ArrayList<>();       // tokenId
@@ -245,7 +233,7 @@ public class ContractTest {
             // BigInteger id 发送的Token
             // BigInteger amount 发送的数量
             // byte[] data 格外的数据
-            TransactionReceipt txReceipt = common1155Contract.safeTransferFrom(
+            TransactionReceipt txReceipt = loadNFTContracts.safeTransferFrom(
                     ChainConfig.SENDER_ADDRESS,
                     ChainConfig.TO_ADDRESS,
                     BigInteger.valueOf(tokenId),
@@ -450,12 +438,9 @@ public class ContractTest {
      */
     @Test
     public void testSetUri() {
-        Common1155Contract common1155Contract;
-        if ((common1155Contract = ERCService.loadCommon1155Contract()) == null) {
-            return;
-        }
+        Common1155Contract loadNFTContracts = ERCService.LoadNFTContracts();
         try {
-            TransactionReceipt transactionReceipt = common1155Contract.setURI("").sendAsync().get();
+            TransactionReceipt transactionReceipt = loadNFTContracts.setURI("").sendAsync().get();
             System.out.println(transactionReceipt.getTransactionHash());
         } catch (Exception e) {
             e.printStackTrace();

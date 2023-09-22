@@ -1,3 +1,4 @@
+import cn.hutool.core.util.HexUtil;
 import com.contract.proxy.ContractsMetaTxForwarder;
 import com.contract.trace.ContractsTraceSource;
 import org.web3j.protocol.core.methods.response.EthGetCode;
@@ -7,10 +8,12 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class TraceStoreService {
+    private static ContractsTraceSource contractsTraceSource;
+
     public static ContractsTraceSource loadContractsTraceSource() {
         try {
             EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.TRACE_SOURCE_CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION).sendAsync().get();
-            ContractsMetaTxForwarder.BINARY = String.valueOf(ethGetCode);
+            ContractsTraceSource.BINARY = ethGetCode.getCode();
             ContractsTraceSource contractsTraceSource = ContractsTraceSource.load(ChainConfig.TRACE_SOURCE_CONTRACT_ADDRESS, ChainConfig.WEB3J, ChainConfig.BRIDGE_MANAGER, new DefaultGasProvider());
             if (!contractsTraceSource.isValid()) {
                 System.out.println("加载TraceSource合约不是有效的");
@@ -23,7 +26,12 @@ public class TraceStoreService {
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-
     }
 
+    public static ContractsTraceSource LoadContracts() {
+        if (contractsTraceSource == null){
+            contractsTraceSource = loadContractsTraceSource();
+        }
+        return contractsTraceSource;
+    }
 }

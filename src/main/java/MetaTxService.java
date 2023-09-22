@@ -1,16 +1,10 @@
 import com.contract.proxy.ContractsMetaTxForwarder;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.methods.response.EthGetCode;
-import org.web3j.tx.RawTransactionManager;
-import org.web3j.tx.TransactionManager;
 import org.web3j.tx.gas.DefaultGasProvider;
-
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-
 public class MetaTxService {
-
+    private static ContractsMetaTxForwarder metaTxContracts;
     public static ContractsMetaTxForwarder loadForwarderContract() {
         try {
             EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.PROXY_CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION).sendAsync().get();
@@ -27,6 +21,11 @@ public class MetaTxService {
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-
+    }
+    public static ContractsMetaTxForwarder LoadMetaTxContracts() {
+        if (metaTxContracts == null){
+            metaTxContracts = loadForwarderContract();
+        }
+        return metaTxContracts;
     }
 }

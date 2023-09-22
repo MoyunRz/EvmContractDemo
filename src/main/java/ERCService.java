@@ -1,5 +1,6 @@
 import com.contract.proxy.Common1155Contract;
 import com.contract.proxy.ContractsMetaTxForwarder;
+import com.contract.trace.ContractsTraceSource;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetCode;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
@@ -17,11 +18,11 @@ import java.util.concurrent.ExecutionException;
  * ERC1155的代币
  */
 public class ERCService {
-
+    private static Common1155Contract nftContracts;
     public static Common1155Contract loadCommon1155Contract() {
         try {
             EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION).sendAsync().get();
-            ContractsMetaTxForwarder.BINARY = String.valueOf(ethGetCode);
+            Common1155Contract.BINARY = String.valueOf(ethGetCode);
             Common1155Contract common1155Contract = Common1155Contract.load(ChainConfig.CONTRACT_ADDRESS, ChainConfig.WEB3J, ChainConfig.BRIDGE_MANAGER, new DefaultGasProvider());
             if (!common1155Contract.isValid()) {
                 System.out.println("加载1155合约不是有效的");
@@ -57,7 +58,12 @@ public class ERCService {
             return BigInteger.ZERO;
         }
     }
-
+    public static Common1155Contract LoadNFTContracts() {
+        if (nftContracts == null){
+            nftContracts = loadCommon1155Contract();
+        }
+        return nftContracts;
+    }
 }
 
 
