@@ -74,10 +74,22 @@ public class TraceSourceTest {
     @Test
     public void TestBatchStore() {
         List<String> dataJson = new ArrayList<>();
-        dataJson.add("{'a':'1','b':'2'}");
-        dataJson.add("{'c':'1','d':'2'}");
-        dataJson.add("{'e':'1','f':'2'}");
-        dataJson.add("{'g':'1','h':'2'}");
+
+        dataJson.add("{'收货人':'巫1','电话':'**0009','会员id':'116936'}");
+        dataJson.add("{'收货人':'巫22','电话':'**0009','会员id':'116937'}");
+        dataJson.add("{'收货人':'巫23','电话':'**0009','会员id':'116938'}");
+        dataJson.add("{'收货人':'巫24','电话':'**0009','会员id':'116939'}");
+        dataJson.add("{'收货人':'巫25','电话':'**0009','会员id':'116940'}");
+        dataJson.add("{'收货人':'巫26','电话':'**0009','会员id':'116951'}");
+        dataJson.add("{'收货人':'巫2','电话':'**0009','会员id':'116952'}");
+        dataJson.add("{'收货人':'巫3','电话':'**0009','会员id':'116953'}");
+        dataJson.add("{'收货人':'巫4','电话':'**0009','会员id':'116954'}");
+        dataJson.add("{'收货人':'巫5','电话':'**0009','会员id':'116955'}");
+        dataJson.add("{'收货人':'巫6','电话':'**0009','会员id':'116956'}");
+        dataJson.add("{'收货人':'巫7','电话':'**0009','会员id':'116957'}");
+        dataJson.add("{'收货人':'巫8','电话':'**0009','会员id':'116958'}");
+        dataJson.add("{'收货人':'巫9','电话':'**0009','会员id':'116959'}");
+
         ContractsTraceSource storeSource = TraceStoreService.LoadContracts();
         try {
             long nowTime = System.currentTimeMillis();
