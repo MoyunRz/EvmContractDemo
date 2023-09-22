@@ -32,8 +32,6 @@ import java.util.concurrent.ExecutionException;
 
 public class ProxyContractTest {
 
-
-
     @Test
     public void GetContractBINARY() {
         ContractsMetaTxForwarder contractsMetaTxForwarder;
@@ -48,7 +46,6 @@ public class ProxyContractTest {
      * @return
      */
     public RequestTx myData() {
-
 
         RequestData requestData = new RequestData(
                 "0x292F714cf36cD7d616425ec8c9D40187F60bf6Da",
@@ -161,7 +158,7 @@ public class ProxyContractTest {
                         new Address(160, "0x7a1771B9Aea7eCea009db701f044a11De5535601"),
                         new Uint256(0),
                         new Uint256(75842),
-                        new Uint256(0),
+                        new Uint256(nonce),
                         new DynamicBytes(remoteCallData)
                 );
                 // 开始调用
