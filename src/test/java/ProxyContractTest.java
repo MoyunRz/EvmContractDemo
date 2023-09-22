@@ -33,11 +33,10 @@ import java.util.concurrent.ExecutionException;
 public class ProxyContractTest {
 
     @Test
-    public void GetContractBINARY() {
-        ContractsMetaTxForwarder contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = MetaTxService.loadForwarderContract()) == null) {
-            return;
-        }
+    public void GetContractBINARY() throws ExecutionException, InterruptedException {
+        EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.PROXY_CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION).sendAsync().get();
+        ContractsMetaTxForwarder.BINARY = ethGetCode.getCode();
+        System.out.println(ethGetCode.getCode());
     }
 
     /**

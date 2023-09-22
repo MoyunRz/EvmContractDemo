@@ -18,11 +18,10 @@ public class TraceSourceTest {
 
 
     @Test
-    public void GetContractBINARY() {
-        ContractsTraceSource contractsMetaTxForwarder;
-        if ((contractsMetaTxForwarder = TraceStoreService.loadContractsTraceSource()) == null) {
-            return;
-        }
+    public void GetContractBINARY() throws ExecutionException, InterruptedException {
+        EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.TRACE_SOURCE_CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION).sendAsync().get();
+        ContractsTraceSource.BINARY = ethGetCode.getCode();
+        System.out.println(ethGetCode.getCode());
     }
 
     /**

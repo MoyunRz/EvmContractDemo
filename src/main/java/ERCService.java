@@ -22,7 +22,7 @@ public class ERCService {
     public static Common1155Contract loadCommon1155Contract() {
         try {
             EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION).sendAsync().get();
-            Common1155Contract.BINARY = String.valueOf(ethGetCode);
+            Common1155Contract.BINARY = ethGetCode.getCode();
             Common1155Contract common1155Contract = Common1155Contract.load(ChainConfig.CONTRACT_ADDRESS, ChainConfig.WEB3J, ChainConfig.BRIDGE_MANAGER, new DefaultGasProvider());
             if (!common1155Contract.isValid()) {
                 System.out.println("加载1155合约不是有效的");

@@ -40,11 +40,10 @@ import java.util.concurrent.ExecutionException;
 
 public class ContractTest {
     @Test
-    public void GetContractBINARY() {
-        Common1155Contract common1155Contract;
-        if ((common1155Contract = ERCService.loadCommon1155Contract()) == null) {
-            return;
-        }
+    public void GetContractBINARY() throws ExecutionException, InterruptedException {
+        EthGetCode ethGetCode = ChainConfig.WEB3J.ethGetCode(ChainConfig.CONTRACT_ADDRESS, ChainConfig.CHAIN_VERSION).sendAsync().get();
+        Common1155Contract.BINARY = ethGetCode.getCode();
+        System.out.println(ethGetCode.getCode());
     }
 
     @Test
